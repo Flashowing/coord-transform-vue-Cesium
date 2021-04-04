@@ -2,8 +2,9 @@ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue';
-
-// import 'cesium/Widgets/widgets.css'
+// eslint-disable-next-line no-unused-vars
+import $ from 'jquery';
+import 'cesium/Widgets/widgets.css'
 
 
 Vue.use(ElementUI);
