@@ -1,0 +1,125 @@
+<template>
+  <div>
+    <el-row>
+      <table id="table-f4">
+        <tr>
+          <td>度分秒:</td>
+          <td>
+            <el-col :xs="24">
+              <div class="grid-content bg-purple">
+                <el-input class="input" v-model="degrees" placeholder="106"></el-input>
+                °
+                <el-input class="input" v-model="minute" placeholder="34"></el-input>
+                ′
+                <el-input class="input" v-model="second" placeholder="20.48"></el-input>
+                ″
+              </div>
+            </el-col>
+          </td>
+        </tr>
+        <tr>
+          <td>经纬度:</td>
+          <td>
+            <el-col :span="6" :xs="24">
+              <div class="grid-content bg-purple">
+                <el-input class="input2" v-model="lonAndLat" placeholder="请输入经纬度"></el-input>
+              </div>
+            </el-col>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <el-button @click="transformCoord">转换</el-button>
+
+            <el-button @click="switchLocation">交换位置</el-button>
+
+            <el-button @click="clearInput">清空</el-button>
+          </td>
+        </tr>
+      </table>
+    </el-row>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "TransDuFenMiao",
+  data() {
+    return {
+      degrees: '',
+      minute: '',
+      second: '',
+      lonAndLat: '',
+      status: 'D2L',
+    }
+  },
+  methods: {
+    transformCoord: function () {
+      if (this.status == "D2L") {
+        if (!this.degrees || !this.minute || !this.second) {
+          this.$message.error('请输入正确的坐标');
+          return;
+        }
+        let degree = Number(this.degrees);
+        let minute = Number(this.minute);
+        let second = Number(this.second);
+        let result = degree + (minute / 60) + (second / 3600);
+        this.lonAndLat = result;
+      } else {
+        this.lonAndLat += "";
+        console.log(this.lonAndLat)
+        if (!this.lonAndLat) {
+          this.$message.error('请输入正确的坐标');
+          return;
+        }
+        if (this.lonAndLat.split('.').length > 2) {
+          this.$message.error('请输入正确的坐标');
+        }
+        try {
+          let degree2 = this.lonAndLat.split('.')[0];
+          let minuteAndSecond = this.lonAndLat.split('.')[1];
+          degree2 = Number(degree2);
+          minuteAndSecond = Number("0." + minuteAndSecond);
+          let minute2 = ((minuteAndSecond * 60) + '').split('.')[0];
+          let secondTemp = ((minuteAndSecond * 60) + '').split('.')[1];
+          secondTemp = Number('0.' + secondTemp);
+          let second2 = secondTemp * 60;
+          second2 = Number(second2.toFixed(2));
+          this.degrees = degree2;
+          this.minute = minute2;
+          this.second = second2;
+        } catch (e) {
+          this.$message.error('请输入正确的坐标');
+        }
+      }
+    },
+    switchLocation: function () {
+      let table = document.getElementById('table-f4');
+      let childNodes = table.childNodes;
+      var tr = childNodes[0];
+      var btn = childNodes[2];
+      table.appendChild(tr);
+      table.appendChild(btn);
+      console.log(this.lonAndLat)
+      if (this.status == "D2L") {
+        this.status = "L2D";
+      } else {
+        this.status = "D2L";
+      }
+    },
+    clearInput: function () {
+
+    }
+  }
+}
+</script>
+
+<style scoped>
+.input {
+  width: 120px;
+}
+
+.input2 {
+  width: 200px;
+}
+</style>
