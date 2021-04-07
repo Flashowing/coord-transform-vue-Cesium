@@ -72,10 +72,16 @@ export default {
           this.$message.error('请输入正确的坐标');
           return;
         }
-        if (this.lonAndLat.split('.').length > 2) {
-          this.$message.error('请输入正确的坐标');
-        }
         try {
+          if (this.lonAndLat.split('.').length > 2) {
+            this.$message.error('请输入正确的坐标');
+            return;
+          }
+          let patt = /^(-|\+)?\d+(\.\d+)?$/g  //匹配正数、负数、和小数
+          if (!patt.test(this.lonAndLat)) {
+            this.$message.error('请输入正确的坐标');
+            return;
+          }
           let degree2 = this.lonAndLat.split('.')[0];
           let minuteAndSecond = this.lonAndLat.split('.')[1];
           degree2 = Number(degree2);
@@ -108,7 +114,10 @@ export default {
       }
     },
     clearInput: function () {
-
+      this.degrees = '';
+      this.minute = '';
+      this.second = '';
+      this.lonAndLat = '';
     }
   }
 }
