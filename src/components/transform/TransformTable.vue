@@ -10,7 +10,10 @@
       <el-tab-pane label="经纬度转弧度" name="third">
         <DegreesToCartographic></DegreesToCartographic>
       </el-tab-pane>
-      <el-tab-pane label="度分秒坐标转换" name="fourth">
+      <el-tab-pane label="弧度转经纬度" name="fourth">
+        <CartographicToDegrees></CartographicToDegrees>
+      </el-tab-pane>
+      <el-tab-pane label="度分秒坐标转换" name="fifth">
         <TransDuFenMiao></TransDuFenMiao>
       </el-tab-pane>
     </el-tabs>
@@ -23,6 +26,7 @@ import DegreesToCartesian from "@/components/transform/DegreesToCartesian";
 import CartesianToDegrees from "@/components/transform/CartesianToDegrees";
 import DegreesToCartographic from "@/components/transform/DegreesToCartographic";
 import TransDuFenMiao from "@/components/transform/TransDuFenMiao";
+import CartographicToDegrees from "./CartographicToDegrees";
 export default {
   name: "TransformTable",
   data() {
@@ -34,7 +38,8 @@ export default {
     DegreesToCartesian,
     CartesianToDegrees,
     DegreesToCartographic,
-    TransDuFenMiao
+    TransDuFenMiao,
+    CartographicToDegrees
   },
   methods: {
     handleClick(tab, event) {

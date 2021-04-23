@@ -7,7 +7,6 @@ import $ from 'jquery';
 import 'cesium/Widgets/widgets.css'
 import VueClipboard from 'vue-clipboard2'
 
-
 Vue.use(VueClipboard)
 Vue.use(ElementUI);
 

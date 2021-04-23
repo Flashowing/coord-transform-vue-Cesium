@@ -1,6 +1,7 @@
 <template>
   <div class="map-box">
-    <div id="cesiumContainer"></div>
+    <div id="cesiumContainer">
+    </div>
   </div>
 </template>
 <script src="js/popup.js"></script>
@@ -11,7 +12,7 @@ import {pickPositions} from "../../public/js/pickPositionOnMap";
 
 export default {
   name: "CesiumViewer",
-  mounted(){
+  mounted() {
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZmJmNzcyYy0zZGU0LTQwNTktYTI4OS1iNGJkZGQzYjY3ODQiLCJpZCI6MzU1NTEsImlhdCI6MTYxMzI0MzQzN30.a8eqFFgsXzfi1eLyG4_ETXq6y7ZDn_Z2EASqsJWiEfs';
     var viewer = new Cesium.Viewer("cesiumContainer", {
       homeButton: true, //主页按钮
@@ -28,47 +29,73 @@ export default {
       navigationInstructionsInitiallyVisible: false,
       // navigation: false,
       scene3DOnly: true, //如果设置为true，则所有几何图形以3D模式绘制以节约GPU资源
-      terrainProvider: Cesium.createWorldTerrain(),
+      // terrainProvider: Cesium.createWorldTerrain(),
     });
-    window._viewer =viewer;
+    window._viewer = viewer;
+    var fullscreen = document.createElement('div');
+    fullscreen.style.position="absolute";
+    fullscreen.style.bottom="0px";
+    fullscreen.style.right="0px";
+    fullscreen.id="fullscreen";
+    fullscreen.style.height="30px";
+    fullscreen.style.width="30px";
+    var c = document.getElementsByClassName("cesium-viewer");
+    c[0].appendChild(fullscreen);
+    new Cesium.FullscreenButton(document.getElementById("fullscreen"), viewer.scene.canvas);
     //去除版权信息
     viewer._cesiumWidget._creditContainer.style.display = "none";
     viewer.camera.flyTo({
-      destination :Cesium.Cartesian3.fromDegrees(106.57235543868288,29.560696474923013, 10000), // 设置位置
+      destination: Cesium.Cartesian3.fromDegrees(106.57235543868288, 29.560696474923013, 10000), // 设置位置
       orientation: {
-        heading :Cesium.Math.toRadians(0.0), // 方向
-        pitch :Cesium.Math.toRadians(-90.0),// 倾斜角度
-        roll :Cesium.Math.toRadians(0)
+        heading: Cesium.Math.toRadians(0.0), // 方向
+        pitch: Cesium.Math.toRadians(-90.0),// 倾斜角度
+        roll: Cesium.Math.toRadians(0)
       },
-      duration:5, // 设置飞行持续时间，默认会根据距离来计算
-      complete:function () {
+      duration: 5, // 设置飞行持续时间，默认会根据距离来计算
+      complete: function () {
         // 到达位置后执行的回调函数
       },
-      cancle:function () {
+      cancle: function () {
         // 如果取消飞行则会调用此函数
       },
-      pitchAdjustHeight:-90, // 如果摄像机飞越高于该值，则调整俯仰俯仰的俯仰角度，并将地球保持在视口中。
-      maximumHeight:5000, // 相机最大飞行高度
-      flyOverLongitude:100, // 如果到达目的地有2种方式，设置具体值后会强制选择方向飞过这个经度(这个，很好用)
+      pitchAdjustHeight: -90, // 如果摄像机飞越高于该值，则调整俯仰俯仰的俯仰角度，并将地球保持在视口中。
+      maximumHeight: 5000, // 相机最大飞行高度
+      flyOverLongitude: 100, // 如果到达目的地有2种方式，设置具体值后会强制选择方向飞过这个经度(这个，很好用)
     });
+    var token = 'c6a366fc893103a30164aef8a5a298f7';
+    // 服务域名
+    var tdtUrl = 'https://t{s}.tianditu.gov.cn/';
+    // 服务负载子域
+    var subdomains = ['0', '1', '2', '3', '4', '5', '6', '7'];
+    // 叠加影像服务
+    var imgMap = new Cesium.UrlTemplateImageryProvider({
+      url: tdtUrl + 'DataServer?T=img_w&x={x}&y={y}&l={z}&tk=' + token,
+      subdomains: subdomains,
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      maximumLevel: 18
+    });
+    viewer.imageryLayers.addImageryProvider(imgMap);
 
-    let imageryProvider = new Cesium.UrlTemplateImageryProvider({
-      url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
-      layer: "tdtVecBasicLayer",
+    // 叠加国界服务
+    var iboMap = new Cesium.UrlTemplateImageryProvider({
+      url: tdtUrl + 'DataServer?T=ibo_w&x={x}&y={y}&l={z}&tk=' + token,
+      subdomains: subdomains,
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      maximumLevel: 10
+    });
+    viewer.imageryLayers.addImageryProvider(iboMap);
+
+    var TDT_CVA_W = "http://{s}.tianditu.gov.cn/cva_w/wmts?service=wmts&request=GetTile&version=1.0.0" + "&LAYER=cva&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}" + "&style=default.jpg&tk=" + token;
+
+    var zhLayer = new Cesium.WebMapTileServiceImageryProvider({
+      url: TDT_CVA_W,
+      layer: "cva",
       style: "default",
-      format: "image/png",
-      tileMatrixSetID: "GoogleMapsCompatible",
+      format: "jpg",
+      tileMatrixSetID: "w",
+      maximumLevel: 18,
     })
-    // eslint-disable-next-line no-unused-vars
-    var _imageryProvider = viewer.imageryLayers.addImageryProvider(imageryProvider);
-    // 如果需要叠加高德/百度注记地图则添加以下代码
-    viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
-      url: "http://webst02.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scale=1&style=8",
-      layer: "tdtAnnoLayer",
-      style: "default",
-      format: "image/jpeg",
-      tileMatrixSetID: "GoogleMapsCompatible"
-    }));
+    viewer.imageryLayers.addImageryProvider(zhLayer);
     pickPositions()
   },
 }
@@ -87,5 +114,14 @@ export default {
 .map-box > div {
   /*width: 100%;*/
   /*height: 100%;*/
+}
+.fullscreen{
+  width: 30px;
+  height: 30px;
+  background: #3370cc;
+  position: absolute;
+  bottom: 100px;
+  left: 0px;
+
 }
 </style>

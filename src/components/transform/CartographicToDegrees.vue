@@ -3,7 +3,6 @@
     <el-row>
       <el-col :span="24">
         <div class="grid-content bg-purple">
-          <p>let cartographic = Cesium.Cartographic.fromCartesian(cartesian)</p>
           <p>let lon = Cesium.Math.toDegrees(cartographic.longitude)</p>
           <p>let lat = Cesium.Math.toDegrees(cartographic.latitude)</p>
         </div>
@@ -12,31 +11,21 @@
     <el-row>
       <table>
         <tr>
-          <td>X:</td>
+          <td>longitude:</td>
           <td>
             <el-col :span="6" :xs="24">
               <div class="grid-content bg-purple">
-                <el-input class="input" v-model="car_x_f2" placeholder="Cartesian3.x"></el-input>
+                <el-input class="input" v-model="carto_lon" placeholder="Cartographic.longitude"></el-input>
               </div>
             </el-col>
           </td>
         </tr>
         <tr>
-          <td>Y:</td>
+          <td>latitude:</td>
           <td>
             <el-col :span="6" :xs="24">
               <div class="grid-content bg-purple">
-                <el-input class="input" v-model="car_y_f2" placeholder="Cartesian3.y"></el-input>
-              </div>
-            </el-col>
-          </td>
-        </tr>
-        <tr>
-          <td>Z:</td>
-          <td>
-            <el-col :span="6" :xs="24">
-              <div class="grid-content bg-purple">
-                <el-input class="input" v-model="car_z_f2" placeholder="Cartesian3.z"></el-input>
+                <el-input class="input" v-model="carto_lat" placeholder="Cartographic.latitude"></el-input>
               </div>
             </el-col>
           </td>
@@ -62,31 +51,28 @@
 
 <script>
 export default {
-  name: "CartesianToDegrees",
+  name: "CartographicToDegrees",
   data() {
     return {
-      car_x_f2: '',
-      car_y_f2: '',
-      car_z_f2: '',
+      carto_lon: '',
+      carto_lat: '',
       result: '',
       showCopy: false,
     }
   },
   methods: {
     Cartesian3ToDegrees: function () {
-      if (!this.car_x_f2 || !this.car_y_f2 || !this.car_z_f2) {
+      if (!this.carto_lon || !this.carto_lat) {
         this.$message.error('请输入正确的坐标');
         return;
       }
       try {
-        let x = Number(this.car_x_f2);
-        let y = Number(this.car_y_f2);
-        let z = Number(this.car_z_f2);
-        let cartographic = Cesium.Cartographic.fromCartesian(new Cesium.Cartesian3(x, y, z));
+        let cLon = Number(this.carto_lon);
+        let cLat = Number(this.carto_lat);
+        let cartographic = new Cesium.Cartographic(cLon, cLat, 0);
         let lon = Cesium.Math.toDegrees(cartographic.longitude);
         let lat = Cesium.Math.toDegrees(cartographic.latitude);
-        let elev = cartographic.height;
-        this.result = lon + "," + lat + "," + elev;
+        this.result = lon + "," + lat;
         this.showCopy = true;
       } catch (e) {
         // console.log(e);

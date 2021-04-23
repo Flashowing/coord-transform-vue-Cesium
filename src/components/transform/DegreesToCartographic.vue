@@ -2,8 +2,10 @@
   <div>
     <el-row>
       <el-col :span="24">
-        <div class="grid-content bg-purple">Cesium.Cartesian3.fromDegrees (longitude, latitude, height , ellipsoid ,
-          result )
+        <div class="grid-content bg-purple">
+          <p>Cesium.Cartesian3.fromDegrees (longitude, latitude, height , ellipsoid ,
+            result )</p>
+          <p>Cesium.Cartographic.fromCartesian(cartesian3);</p>
         </div>
       </el-col>
     </el-row>
@@ -31,7 +33,12 @@
         </tr>
         <tr>
           <td colspan="2">{{ result }}</td>
-          <td><el-link id="copy-f3" class="copy-f3" v-clipboard:copy="result" v-clipboard:success="onCopy" v-clipboard:error="onError" v-show="showCopy" :underline="false" type="primary" icon="el-icon-document-copy">复制</el-link></td>
+          <td>
+            <el-link id="copy-f3" class="copy-f3" v-clipboard:copy="result" v-clipboard:success="onCopy"
+                     v-clipboard:error="onError" v-show="showCopy" :underline="false" type="primary"
+                     icon="el-icon-document-copy">复制
+            </el-link>
+          </td>
         </tr>
         <tr>
           <td colspan="2">
@@ -54,7 +61,7 @@ export default {
       showCopy: false,
     }
   },
-  methods:{
+  methods: {
     LatAndLonToCartographic: function () {
       if (!this.height_input) {
         this.height_input = 0;
@@ -70,9 +77,9 @@ export default {
         let lat = cartographic3.latitude;
         // eslint-disable-next-line no-unused-vars
         let height = cartographic3.height;
-        this.result = lon+','+lat;
+        this.result = lon + ',' + lat;
         this.showCopy = true;
-      }catch (e) {
+      } catch (e) {
         this.$message.error('请输入正确的坐标');
       }
     },

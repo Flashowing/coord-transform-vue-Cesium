@@ -20,9 +20,13 @@
         <tr>
           <td>经纬度:</td>
           <td>
-            <el-col :span="6" :xs="24">
+            <el-col :xs="24">
               <div class="grid-content bg-purple">
                 <el-input class="input2" v-model="lonAndLat" placeholder="请输入经纬度"></el-input>
+                <el-link id="copy-f3" class="copy-f3" v-clipboard:copy="lonAndLat" v-clipboard:success="onCopy"
+                         v-clipboard:error="onError" v-show="showCopy" :underline="false" type="primary"
+                         icon="el-icon-document-copy">复制
+                </el-link>
               </div>
             </el-col>
           </td>
@@ -51,6 +55,7 @@ export default {
       second: '',
       lonAndLat: '',
       status: 'D2L',
+      showCopy:false,
     }
   },
   methods: {
@@ -65,6 +70,7 @@ export default {
         let second = Number(this.second);
         let result = degree + (minute / 60) + (second / 3600);
         this.lonAndLat = result;
+        this.showCopy = true;
       } else {
         this.lonAndLat += "";
         console.log(this.lonAndLat)
@@ -100,6 +106,7 @@ export default {
       }
     },
     switchLocation: function () {
+      this.showCopy = false;
       let table = document.getElementById('table-f4');
       let childNodes = table.childNodes;
       var tr = childNodes[0];
@@ -118,6 +125,13 @@ export default {
       this.minute = '';
       this.second = '';
       this.lonAndLat = '';
+      this.showCopy = false;
+    },
+    onCopy: function () {
+      this.$message.success('复制成功')
+    },
+    onError: function () {
+      this.$message.error('复制失败');
     }
   }
 }

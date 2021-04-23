@@ -33,6 +33,14 @@
           <td colspan="2">{{ result }}</td>
         </tr>
         <tr>
+          <td>
+            <el-link id="copy-f3" class="copy-f3" v-clipboard:copy="result" v-clipboard:success="onCopy"
+                     v-clipboard:error="onError" v-show="showCopy" :underline="false" type="primary"
+                     icon="el-icon-document-copy">复制
+            </el-link>
+          </td>
+        </tr>
+        <tr>
           <td colspan="2">
             <el-button @click="LatAndLonToCartesian">转换</el-button>
           </td>
@@ -51,6 +59,7 @@ export default {
       lon_input: '',
       lat_input: '',
       result: '',
+      showCopy: false,
     }
   },
   methods: {
@@ -60,11 +69,17 @@ export default {
         var latitude = Number(this.lat_input);
         let cartesian3 = Cesium.Cartesian3.fromDegrees(longitude, latitude);
         this.result = cartesian3;
+        this.showCopy = true;
       } catch (e) {
         console.log(e);
         this.$message.error('请输入正确的坐标');
       }
-
+    },
+    onCopy: function () {
+      this.$message.success('复制成功')
+    },
+    onError: function () {
+      this.$message.error('复制失败');
     }
   }
 }
