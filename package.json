@@ -11,6 +11,7 @@
     "@types/cesium": "^1.67.13",
     "cesium": "^1.80.0",
     "cesium-tdt": "^1.1.0",
+    "compression-webpack-plugin": "^5.0.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.1",
     "jquery": "^3.6.0",
