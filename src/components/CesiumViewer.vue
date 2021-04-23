@@ -4,11 +4,14 @@
     </div>
   </div>
 </template>
-<script src="js/popup.js"></script>
-<script src="js/pickPositionOnMap.js"></script>
+<!--<script src="js/popup.js"></script>-->
+<!--<script src="js/pickPositionOnMap.js"></script>-->
+<script src="js/plug-in/showLonLatHeight.js"></script>
 <script>
 import $ from 'jquery'
 import {pickPositions} from "../../public/js/pickPositionOnMap";
+import {showLoc} from "../../public/js/plug-in/showLonLatHeight";
+import CesiumLocal from  "../../public/js/plug-in/cesium.local";
 
 export default {
   name: "CesiumViewer",
@@ -32,16 +35,28 @@ export default {
       // terrainProvider: Cesium.createWorldTerrain(),
     });
     window._viewer = viewer;
-    var fullscreen = document.createElement('div');
+    var fullscreen = document.createElement('div'); // 自定义全屏按钮只全屏canvas
     fullscreen.style.position="absolute";
     fullscreen.style.bottom="0px";
     fullscreen.style.right="0px";
     fullscreen.id="fullscreen";
     fullscreen.style.height="30px";
     fullscreen.style.width="30px";
+    fullscreen.className="hidden-xs-only";
     var c = document.getElementsByClassName("cesium-viewer");
     c[0].appendChild(fullscreen);
-    new Cesium.FullscreenButton(document.getElementById("fullscreen"), viewer.scene.canvas);
+   window._fullscreenButton = new Cesium.FullscreenButton(document.getElementById("fullscreen"), document.getElementById('cesiumContainer'));
+  // if (window._fullscreenButton.viewModel.tooltip == "Full screen"){
+  //   window._fullscreenButton.viewModel.tooltip = "全屏";
+  // }
+    viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function(e) {
+      e.cancel = true;
+      //你要飞的位置
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(106.57235543868288, 29.560696474923013, 10000)
+      });
+    });
+
     //去除版权信息
     viewer._cesiumWidget._creditContainer.style.display = "none";
     viewer.camera.flyTo({
@@ -96,7 +111,23 @@ export default {
       maximumLevel: 18,
     })
     viewer.imageryLayers.addImageryProvider(zhLayer);
-    pickPositions()
+
+    viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+      //影像注记
+      url: "http://t{s}.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk="+token,
+      subdomains: subdomains,
+      layer: "tdtCiaLayer",
+      style: "default",
+      format: "image/jpeg",
+      tileMatrixSetID: "GoogleMapsCompatible",
+      show: true
+    }));
+    pickPositions();
+    const a = new showLoc({
+      enabled: true,
+      viewer: viewer,
+    });
+    const localZh = new CesiumLocal(viewer);
   },
 }
 </script>

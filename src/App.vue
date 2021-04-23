@@ -16,7 +16,7 @@
           <el-col :md="6">
             <div style="color: white">placeholder</div>
           </el-col>
-          <el-col class="hidden-xs-only" :md="12">
+          <el-col :md="12">
             <div class="map">
               <CesiumViewer></CesiumViewer>
             </div>

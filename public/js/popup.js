@@ -1,8 +1,9 @@
 import $ from 'jquery'
 // 创建弹窗对象的方法
-var Popup = function (info) {
+const Popup = function (info) {
+    console.log(this)
     this.constructor(info);
-}
+};
 Popup.prototype.id = 0;
 Popup.prototype.isAutoCopy = true;
 Popup.prototype.constructor = function (info) {
